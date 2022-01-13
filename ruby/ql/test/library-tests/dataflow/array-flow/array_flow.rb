@@ -710,7 +710,8 @@ end
 # 86 sum
 # 87 take
 # 88 take_while
-# 89 tally
+
+# TODO: test method (m89) for `tally``, once we have flow through hashes
 
 def m90
     a = [0, 1, 2, source(90)]
