@@ -678,7 +678,15 @@ def m73
     end
 end
 
-# 74 partition
+def m74
+    a = [0, 1, source(74)]
+    b = a.partition do |x|
+        sink x # $ hasValueFlow=74
+        x > 10
+    end
+    sink b[0][0] # $ hasValueFlow=74
+    sink b[1][0] # $ hasValueFlow=74
+end
 
 def m75
     a = [0, 1, source(75.1)]

@@ -1682,6 +1682,17 @@ module Enumerable {
     }
   }
 
+  private class PartitionSummary extends SimpleSummarizedCallable {
+    PartitionSummary() { this = "partition" }
+
+    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
+      input = "ArrayElement of Receiver" and
+      output =
+        ["Parameter[0] of BlockArgument", "ArrayElement[?] of ArrayElement[?] of ReturnValue"] and
+      preservesValue = true
+    }
+  }
+
   private class QuerySummary extends SimpleSummarizedCallable {
     QuerySummary() { this = ["all?", "any?", "none?", "one?"] }
 
