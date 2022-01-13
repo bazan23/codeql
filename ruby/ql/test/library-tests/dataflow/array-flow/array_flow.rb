@@ -664,8 +664,20 @@ def m71
     sink b[1] # $ hasValueFlow=71
 end
 
-# 72 none?
-# 73 one?
+def m72
+    a = [0, 1, source(72)]
+    a.none? do |x|
+        sink x # $ hasValueFlow=72
+    end
+end
+
+def m73
+    a = [0, 1, source(73)]
+    a.one? do |x|
+        sink x # $ hasValueFlow=73
+    end
+end
+
 # 74 partition
 
 def m75

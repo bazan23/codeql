@@ -1166,34 +1166,6 @@ module Array {
  * https://ruby-doc.org/core-3.1.0/Enumerable.html
  */
 module Enumerable {
-  private class AllSummary extends SimpleSummarizedCallable {
-    AllSummary() { this = "all?" }
-
-    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
-      input = "ArrayElement of Receiver" and
-      output = "Parameter[0] of BlockArgument" and
-      preservesValue = true
-      or
-      input = "ReturnValue of BlockArgument" and
-      output = "ReturnValue" and
-      preservesValue = false
-    }
-  }
-
-  private class AnySummary extends SimpleSummarizedCallable {
-    AnySummary() { this = "any?" }
-
-    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
-      input = "ArrayElement of Receiver" and
-      output = "Parameter[0] of BlockArgument" and
-      preservesValue = true
-      or
-      input = "ReturnValue of BlockArgument" and
-      output = "ReturnValue" and
-      preservesValue = false
-    }
-  }
-
   private class ChunkSummary extends SimpleSummarizedCallable {
     ChunkSummary() { this = "chunk" }
 
@@ -1707,6 +1679,21 @@ module Enumerable {
       input = "ArrayElement of Receiver" and
       output = ["Parameter[0] of BlockArgument", "ArrayElement[?] of ReturnValue"] and
       preservesValue = true
+    }
+  }
+
+  private class QuerySummary extends SimpleSummarizedCallable {
+    QuerySummary() { this = ["all?", "any?", "none?", "one?"] }
+
+    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
+      input = "ArrayElement of Receiver" and
+      output = "Parameter[0] of BlockArgument" and
+      preservesValue = true
+      or
+      // TODO: does this really make sense?
+      input = "ReturnValue of BlockArgument" and
+      output = "ReturnValue" and
+      preservesValue = false
     }
   }
 
