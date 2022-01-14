@@ -1766,6 +1766,23 @@ module Enumerable {
     }
   }
 
+  private class TakeWhileSummary extends SimpleSummarizedCallable {
+    TakeWhileSummary() { this = "take_while" }
+
+    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
+      input = "ArrayElement of Receiver" and
+      output = ["Parameter[0] of BlockArgument"] and
+      preservesValue = true
+      or
+      // We can't know the size of the return value, but we know that indices
+      // are preserved, so, as an approximation, we just treat it like the array
+      // is copied.
+      input = "Receiver" and
+      output = "ReturnValue" and
+      preservesValue = true
+    }
+  }
+
   private class ToASummary extends SimpleSummarizedCallable {
     // `entries` is an alias of `to_a`.
     ToASummary() { this = ["to_a", "entries"] }

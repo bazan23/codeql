@@ -741,7 +741,16 @@ def m87(i)
     sink(b[2]) # $ hasValueFlow=87.1 # $ hasValueFlow=87.3
 end
 
-# 88 take_while
+def m88
+    a = [0, 1, source(88)]
+    b = a.take_while do |x|
+        sink x # $ hasValueFlow=88
+        x < 10
+    end
+    sink b[0]
+    sink b[1]
+    sink b[2] # $ hasValueFlow=88
+end
 
 # TODO: test method (m89) for `tally`, once we have flow through hashes
 
