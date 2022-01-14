@@ -771,4 +771,18 @@ def m91
     sink c[0] # $ hasValueFlow=91.1 $ hasValueFlow=91.2
 end
 
-# 92 zip
+def m92
+    a = [0, 1, source(92.1)]
+    b = [2, source(92.2), 3]
+    c = [source(92.3), 4, 5]
+    d = a.zip(b, c)
+    sink d[0]0]
+    sink d[0][2] # $ hasValueFlow=92.3
+    sink d[1][1] # $ hasValueFlow=92.2
+    sink d[2][0] # $ hasValueFlow=92.1
+    a.zip(b, c) do |x|
+        sink x[0] # $ hasValueFlow=92.1
+        sink x[1] # $ hasValueFlow=92.2
+        sink x[2] # $ hasValueFlow=92.3
+    end
+end

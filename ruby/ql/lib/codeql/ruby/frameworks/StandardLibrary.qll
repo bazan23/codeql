@@ -1803,4 +1803,61 @@ module Enumerable {
       preservesValue = true
     }
   }
+
+  abstract private class ZipSummary extends SummarizedCallable {
+    MethodCall mc;
+
+    bindingset[this]
+    ZipSummary() { mc.getMethodName() = "zip" }
+
+    override MethodCall getACall() { result = mc }
+  }
+
+  private class ZipBlockSummary extends ZipSummary {
+    ZipBlockSummary() { this = "zip(block)" and exists(mc.getBlock()) }
+
+    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
+      (
+        input = "ArrayElement of Receiver" and
+        output = "ArrayElement[0] of Parameter[0] of BlockArgument"
+        or
+        exists(int j | j in [0 .. 5] |
+          input = "ArrayElement of Argument[" + j + "]" and
+          output = "ArrayElement[" + (j + 1) + "] of Parameter[0] of BlockArgument"
+        )
+      ) and
+      preservesValue = true
+    }
+  }
+
+  private class ZipNoBlockSummary extends ZipSummary {
+    ZipNoBlockSummary() { this = "zip(no_block)" and not exists(mc.getBlock()) }
+
+    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
+      (
+        // receiver[i] -> return_value[i][0]
+        exists(ArrayIndex i |
+          input = "ArrayElement[" + i + "] of Receiver" and
+          output = "ArrayElement[0] of ArrayElement[" + i + "] of ReturnValue"
+        )
+        or
+        // receiver[?] -> return_value[0][?]
+        input = "ArrayElement[?] of Receiver" and
+        output = "ArrayElement[0] of ArrayElement[?] of ReturnValue"
+        or
+        // arg_j[i] -> return_value[i][j+1]
+        exists(ArrayIndex i, int j | j in [0 .. 5] |
+          input = "ArrayElement[" + i + "] of Argument[" + j + "]" and
+          output = "ArrayElement[" + (j + 1) + "] of ArrayElement[" + i + "] of ReturnValue"
+        )
+        or
+        // arg_j[?] -> return_value[?][j+1]
+        exists(int j | j in [0 .. 5] |
+          input = "ArrayElement[?] of Argument[" + j + "]" and
+          output = "ArrayElement[" + (j + 1) + "] of ArrayElement[?] of ReturnValue"
+        )
+      ) and
+      preservesValue = true
+    }
+  }
 }
