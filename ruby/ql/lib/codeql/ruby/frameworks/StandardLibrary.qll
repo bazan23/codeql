@@ -1719,6 +1719,53 @@ module Enumerable {
     }
   }
 
+  abstract private class TakeSummary extends SummarizedCallable {
+    MethodCall mc;
+
+    bindingset[this]
+    TakeSummary() { mc.getMethodName() = "take" }
+
+    override MethodCall getACall() { result = mc }
+  }
+
+  private class TakeKnownSummary extends TakeSummary {
+    private int i;
+
+    TakeKnownSummary() {
+      this = "take(" + i + ")" and
+      i = mc.getArgument(0).getValueText().toInt()
+    }
+
+    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
+      (
+        input = "ArrayElement[?] of Receiver" and
+        output = "ArrayElement[?] of ReturnValue"
+        or
+        exists(ArrayIndex j | j < i |
+          input = "ArrayElement[" + j + "] of Receiver" and
+          output = "ArrayElement[" + j + "] of ReturnValue"
+        )
+      ) and
+      preservesValue = true
+    }
+  }
+
+  private class TakeUnknownSummary extends TakeSummary {
+    TakeUnknownSummary() {
+      this = "take(index)" and
+      not exists(mc.getArgument(0).getValueText().toInt())
+    }
+
+    override predicate propagatesFlowExt(string input, string output, boolean preservesValue) {
+      // When the index is unknown, we can't know the size of the result, but we
+      // know that indices are preserved, so, as an approximation, we just treat
+      // it like the array is copied.
+      input = "Receiver" and
+      output = "ReturnValue" and
+      preservesValue = true
+    }
+  }
+
   private class ToASummary extends SimpleSummarizedCallable {
     // `entries` is an alias of `to_a`.
     ToASummary() { this = ["to_a", "entries"] }

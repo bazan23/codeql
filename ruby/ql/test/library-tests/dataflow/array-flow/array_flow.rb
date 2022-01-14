@@ -716,10 +716,34 @@ end
 # 84 sort
 # 85 sort_by
 # 86 sum
-# 87 take
+
+def m87(i)
+    a = [0, 1, source(87.1), source(87.2)]
+    b = a.take(i)
+    sink(b[0])
+    sink(b[1])
+    sink(b[2]) # $ hasValueFlow=87.1
+    sink(b[3]) # $ hasValueFlow=87.2
+    b = a.take(3)
+    sink(b[0])
+    sink(b[1])
+    sink(b[2]) # $ hasValueFlow=87.1
+    sink(b[3])
+    sink(b[i]) # $ hasValueFlow=87.1
+    b = a.take(100)
+    sink(b[0])
+    sink(b[1])
+    sink(b[2]) # $ hasValueFlow=87.1
+    sink(b[3]) # $ hasValueFlow=87.2
+    sink(b[i]) # $ hasValueFlow=87.1 $ hasValueFlow=87.2
+    a[i] = source(87.3)
+    b = a.take(3)
+    sink(b[2]) # $ hasValueFlow=87.1 # $ hasValueFlow=87.3
+end
+
 # 88 take_while
 
-# TODO: test method (m89) for `tally``, once we have flow through hashes
+# TODO: test method (m89) for `tally`, once we have flow through hashes
 
 def m90
     a = [0, 1, 2, source(90)]
