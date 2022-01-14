@@ -760,5 +760,15 @@ def m90
     sink(b[3]) # $ hasValueFlow=90
 end
 
-# 91 uniq
+def m91
+    a = [0, 1, 2, source(91.1), source(91.2)]
+    b = a.uniq
+    sink b[0] # $ hasValueFlow=91.1 $ hasValueFlow=91.2
+    c = a.uniq do |x|
+        sink x # $ hasValueFlow=91.1 $ hasValueFlow=91.2
+        x % 7
+    end
+    sink c[0] # $ hasValueFlow=91.1 $ hasValueFlow=91.2
+end
+
 # 92 zip
